@@ -1,0 +1,1345 @@
+{{- /*
+Generated from 'vcqm' from https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/main/manifests/grafana-dashboardDefinitions.yaml
+Do not change in-place! In order to change this file first read following link:
+https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack/hack
+*/ -}}
+{{- $kubeTargetVersion := default .Capabilities.KubeVersion.GitVersion .Values.kubeTargetVersionOverride }}
+{{- if and (or .Values.grafana.enabled .Values.grafana.forceDeployDashboards) (semverCompare ">=1.14.0-0" $kubeTargetVersion) (semverCompare "<9.9.9-9" $kubeTargetVersion) .Values.grafana.defaultDashboardsEnabled .Values.kubeScheduler.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ template "kube-prometheus-stack-grafana.namespace" . }}
+  name: {{ printf "%s-%s" (include "kube-prometheus-stack.fullname" $) "vcqm" | trunc 63 | trimSuffix "-" }}
+  annotations:
+{{ toYaml .Values.grafana.sidecar.dashboards.annotations | indent 4 }}
+  labels:
+    {{- if $.Values.grafana.sidecar.dashboards.label }}
+    {{ $.Values.grafana.sidecar.dashboards.label }}: {{ ternary $.Values.grafana.sidecar.dashboards.labelValue "1" (not (empty $.Values.grafana.sidecar.dashboards.labelValue)) | quote }}
+    {{- end }}
+    app: {{ template "kube-prometheus-stack.name" $ }}-grafana
+{{ include "kube-prometheus-stack.labels" $ | indent 4 }}
+data:
+  vcqm.json: |-
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "target": {
+              "limit": 100,
+              "matchAny": false,
+              "tags": [],
+              "type": "dashboard"
+            },
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "gnetId": null,
+      "graphTooltip": 0,
+      "id": 1178,
+      "iteration": 1670404312410,
+      "links": [],
+      "panels": [
+        {
+          "datasource": null,
+          "description": "$camera_latency_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 4,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 20,
+          "options": {
+            "graph": {},
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "7.5.11",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "camera_latency{job=~\"$job\"}",
+              "interval": "1m",
+              "legendFormat": "camera_latency(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Camera latency in ms",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "$processing_fps_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 4,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-red",
+                    "value": null
+                  },
+                  {
+                    "color": "light-green",
+                    "value": 10
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 6,
+          "interval": null,
+          "maxDataPoints": 1485,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "processing_fps{job=~\"$job\"}",
+              "format": "time_series",
+              "instant": false,
+              "interval": "10s",
+              "intervalFactor": 1,
+              "legendFormat": "processing_fps(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Processing FPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "$input_stream_fps_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 1,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 4,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 11
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "input_stream_fps{job=~\"$job\"}",
+              "interval": "10s",
+              "legendFormat": "input_stream_fps(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Input stream FPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "$damaged_frame_percentage_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMax": 100.1,
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 4,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  },
+                  {
+                    "color": "light-red",
+                    "value": 5
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 11
+          },
+          "id": 22,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "100-input_stream_correctness{job=~\"$job\"}",
+              "interval": "1m",
+              "legendFormat": "damaged_frame_percentage(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Damaged frame percentage",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "input_stream_correctness_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMax": 105,
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 4,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-red",
+                    "value": null
+                  },
+                  {
+                    "color": "light-green",
+                    "value": 95
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "input_stream_correctness(job=\"video-content-quality-monitor-6789\", instance=\"10.193.15.92:8000\", pod=\"video-content-quality-monitor-6789-79b8fc77d6-rhpwz\")"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 22
+          },
+          "id": 10,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "input_stream_correctness{job=~\"$job\"}",
+              "interval": "10s",
+              "legendFormat": "input_stream_correctness(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Input stream correctness",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 1,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 4,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 22
+          },
+          "id": 24,
+          "options": {
+            "graph": {},
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "7.5.11",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "input_stream_valid_frame_rate{job=~\"$job\"}",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Valid frame percentage",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "blur_level_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMax": 105,
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  },
+                  {
+                    "color": "light-red",
+                    "value": 54
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 33
+          },
+          "id": 14,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "(1-(blur_level{job=~\"$job\"}-$blur_level_min)/($blur_level_max - $blur_level_min))*100",
+              "interval": "10s",
+              "legendFormat": "blur_level(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "A"
+            },
+            {
+              "exemplar": true,
+              "expr": "(1-(blur_threshold{job=~\"$job\"}-$blur_level_min)/($blur_level_max - $blur_level_min))*100",
+              "hide": false,
+              "interval": "10s",
+              "legendFormat": "blur_threshold(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "B"
+             }
+          ],
+          "title": "Blur level",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "brightness_level_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMax": 105,
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 33
+          },
+          "id": 15,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "brightness_level{job=~\"$job\"}*100",
+              "hide": false,
+              "interval": "10s",
+              "legendFormat": "brightness_level(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "brightness_level"
+            },
+            {
+              "exemplar": true,
+              "expr": "brightness_alert_ratio{job=~\"$job\"}*100",
+              "hide": false,
+              "interval": "10s",
+              "legendFormat": "brightness_alert_ratio(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "brightness_alert_ratio"
+            }
+          ],
+          "title": "Brightness level",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "darkness_level_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMax": 105,
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "id": 17,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "darkness_level{job=~\"$job\"}*100",
+              "hide": false,
+              "interval": "10s",
+              "legendFormat": "darkness_level(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "darkness_level"
+            },
+            {
+              "exemplar": true,
+              "expr": "darkness_alert_ratio{job=~\"$job\"}*100",
+              "hide": false,
+              "interval": "10s",
+              "legendFormat": "darkness_alert_ratio(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "darkness_alert_ratio"
+            }
+          ],
+          "title": "Darkness level",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "fov_blocked_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMax": 105,
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 44
+          },
+          "id": 18,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "current_blocking_area{job=~\"$job\"}*100",
+              "interval": "10s",
+              "legendFormat": "current_blocking_area(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "current_blocking_area"
+            },
+            {
+              "exemplar": true,
+              "expr": "blocked_area_ratio{job=~\"$job\"}*100",
+              "hide": false,
+              "interval": "10s",
+              "legendFormat": "blocked_area_ratio(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "blocked_area_ratio"
+            }
+          ],
+          "title": "Field of View Blocked",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "fov_change_description",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMax": 105,
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 55
+          },
+          "id": 16,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            },
+            "tooltipOptions": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "movement_avg{job=~\"$job\"}",
+              "interval": "10s",
+              "legendFormat": "movement_avg(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "movement_avg"
+            },
+            {
+              "exemplar": true,
+              "expr": "camera_movement_threshold{job=~\"$job\"}",
+              "hide": false,
+              "interval": "10s",
+              "legendFormat": "camera_movement_threshold(job=\"{{`{{`}}job{{`}}`}}\", instance=\"{{`{{`}}instance{{`}}`}}\", pod=\"{{`{{`}}pod{{`}}`}}\")",
+              "refId": "camera_movement_threshold"
+            }
+          ],
+          "title": "Field of View Changed",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 66
+          },
+          "id": 12,
+          "options": {
+            "content": "### Description\n---\n#### Metrics<br>\n- `input_stream_fps` - $input_stream_fps_description\n- `processing_fps` - $processing_fps_description\n- `input_stream_correctness` - $input_stream_correctness_description\n- `damaged_frame_percentage` - $damaged_frame_percentage_description\n- `camera_latency` - $camera_latency_description\n- `valid_frame_rate` - $valid_frame_rate_description\n- `blur_level` - $blur_level_description\n- `brightness_level` - $brightness_level_description\n- `darkness_level` - $darkness_level_description\n- `movement_avg` - $fov_change_description\n- `current_blocking_area` - $fov_blocked_description<br><br>\n\n#### Alerts<br>\n- `input_stream_fps` and `processing_fps` - It could be useful to monitor that the `processing_fps` is constantly lagging behind the `input_stream_fps`. Most applications will also require minimal input and processing frame rates, which are use case dependent. On this dashboard we set the minimal `processing_fps` to 10.\n- `input_stream_correctness` - The alert threshold strongly depends on the use case. For example if every frame counts, you might want 100% input stream correctness. On this dashboard we set the threshold to 95%.\n- `damaged_frame_percentage` - The alert threshold strongly depends on the use case. For example if every frame counts, you might want 0% damaged frame percentage. On this dashboard we set the threshold to 5%.\n- `blur_level` - Alert triggers when the `blur_level` reaches its `blur_threshold`\n- `brightness_alert` - Alert triggers when the `brightness_level` reaches its `brightness_alert_ratio`\n- `darkness_alert` - Alert triggers when the `darkness_level` reaches its `darkness_alert_ratio`\n- `camera_movement_alert` - Alert triggers when the `movement_avg` reaches its `camera_movement_threshold`\n- `camera_blocked_alert` - Alert triggers when the `current_blocking_area` reaches its `blocked_area_ratio`",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.5.11",
+          "type": "text"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 77
+          },
+          "id": 1,
+          "type": "welcome"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 12,
+            "x": 0,
+            "y": 80
+          },
+          "id": 3,
+          "links": [],
+          "options": {
+            "folderId": 0,
+            "maxItems": 30,
+            "query": "",
+            "showHeadings": true,
+            "showRecentlyViewed": true,
+            "showSearch": false,
+            "showStarred": true,
+            "tags": []
+          },
+          "pluginVersion": "7.5.11",
+          "tags": [],
+          "title": "Dashboards",
+          "type": "dashlist"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 12,
+            "x": 12,
+            "y": 80
+          },
+          "id": 4,
+          "links": [],
+          "options": {
+            "feedUrl": "https://grafana.com/blog/news.xml",
+            "showImage": true
+          },
+          "title": "Latest from the blog",
+          "type": "news"
+        }
+      ],
+      "refresh": "",
+      "schemaVersion": 27,
+      "style": "dark",
+      "tags": [
+        "CV"
+      ],
+      "templating": {
+        "list": [
+          {
+            "allValue": null,
+            "current": {
+              "selected": true,
+              "tags": [],
+              "text": [
+                "accessory-sorting-app-82b04c668a0c",
+                "warehouse-qc-app-e147a3890822",
+                "rtsp-quality-monitor-5a202a18dff5",
+                "video-content-quality-monitor-5a202a18dff5",
+                "video-content-quality-monitor-6c9870186e28",
+                "video-image-extractor-5a202a18dff5",
+                "accessory-sorting-app-9822",
+                "accessory-sorting-app-d9f71b797fe7",
+                "rtsp-quality-monitor-eb553f91a211",
+                "longevity-cve-common-2345",
+                "rtsp-quality-monitor-936f95b338e6",
+                "longevity-cve-common-4b249137eb97",
+                "longevity-cve-common-1234",
+                "longevity-cve-common-eb553f91a211",
+                "rtsp-quality-monitor-4b249137eb97",
+                "pick-and-pack-app-1234",
+                "video-content-quality-monitor-4567",
+                "video-content-quality-monitor-5678",
+                "video-content-quality-monitor-8912",
+                "video-content-quality-monitor-6789",
+                "video-content-quality-monitor-9123",
+                "video-content-quality-monitor-7891",
+                "video-image-extractor-b4929f96"
+              ],
+              "value": [
+                "accessory-sorting-app-82b04c668a0c",
+                "warehouse-qc-app-e147a3890822",
+                "rtsp-quality-monitor-5a202a18dff5",
+                "video-content-quality-monitor-5a202a18dff5",
+                "video-content-quality-monitor-6c9870186e28",
+                "video-image-extractor-5a202a18dff5",
+                "accessory-sorting-app-9822",
+                "accessory-sorting-app-d9f71b797fe7",
+                "rtsp-quality-monitor-eb553f91a211",
+                "longevity-cve-common-2345",
+                "rtsp-quality-monitor-936f95b338e6",
+                "longevity-cve-common-4b249137eb97",
+                "longevity-cve-common-1234",
+                "longevity-cve-common-eb553f91a211",
+                "rtsp-quality-monitor-4b249137eb97",
+                "pick-and-pack-app-1234",
+                "video-content-quality-monitor-4567",
+                "video-content-quality-monitor-5678",
+                "video-content-quality-monitor-8912",
+                "video-content-quality-monitor-6789",
+                "video-content-quality-monitor-9123",
+                "video-content-quality-monitor-7891",
+                "video-image-extractor-b4929f96"
+              ]
+            },
+            "datasource": "Prometheus",
+            "definition": "label_values(processing_fps, job)",
+            "description": null,
+            "error": null,
+            "hide": 0,
+            "includeAll": false,
+            "label": "",
+            "multi": true,
+            "name": "job",
+            "options": [],
+            "query": {
+              "query": "label_values(processing_fps, job)",
+              "refId": "StandardVariableQuery"
+            },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "description": null,
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "processing_fps_description",
+            "query": "Processing fps, the number of images processed per elapsed time.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": null,
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "input_stream_fps_description",
+            "query": "Input stream fps, the number of incoming frames per elapsed time.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": null,
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "input_stream_correctness_description",
+            "query": "Percentage of correct frames (correct frames / all frames) per elapsed time.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": null,
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "damaged_frame_percentage_description",
+            "query": "Percentage of damaged frames (100% - input_stream_correctness) per elapsed time.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": null,
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "camera_latency_description",
+            "query": "Camera latency in milliseconds",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": null,
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "valid_frame_rate_description",
+            "query": "Shows the percentage of frames with valid timestamps. Should be exactly 100%.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": "The minimum level of blurriness",
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "blur_level_min",
+            "query": "0",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": "The maximum level of blurriness",
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "blur_level_max",
+            "query": "10",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": "Defines how blurry the image is. Blurriness can be caused by grease or fog building up on the camera lens or the image not being in focus. This metric can be used in many different use cases to detect image quality degradation. Range definition: [0 - 100%], where 0% means, that the  image is sharp and  100% means, that the  image is blurred greatly.",
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "blur_level_description",
+            "query": "Defines how blurry the image is. Blurriness can be caused by grease or fog building up on the camera lens or the image not being in focus. This metric can be used in many different use cases to detect image quality degradation. Range definition: [0 - 100%], where 0% means, that the  image is sharp and  100% means, that the  image is blurred greatly.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": "Defines how bright the image is. Range: [0 - 100%], where 0% means that none of the pixels are above brightness value threshold and 100% means that all of the pixels are above this threshold.",
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "brightness_level_description",
+            "query": "Defines how bright the image is. Range: [0 - 100%], where 0% means that none of the pixels are above brightness value threshold and 100% means that all of the pixels are above this threshold.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": "Defines how dark the image is. Range: [0 - 100%], where 0% means that none of the pixels are below darkness value threshold and 100% means that all of the pixels are below this threshold.",
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "darkness_level_description",
+            "query": "Defines how dark the image is. Range: [0 - 100%], where 0% means that none of the pixels are below darkness value threshold and 100% means that all of the pixels are below this threshold.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": "Represent average movement value of the moving pixels. If the average movement value stays above the threshold for enough consecutive frames an alarm will be triggered.",
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "fov_change_description",
+            "query": "Represent average movement value of the moving pixels. If the average movement value stays above the threshold for enough consecutive frames an alarm will be triggered.",
+            "skipUrlSync": false,
+            "type": "constant"
+          },
+          {
+            "description": "Represent blocked are ratio value of the blocking pixels. If the blocked are ratio value stays above the threshold for enough consecutive frames an alarm will be triggered.",
+            "error": null,
+            "hide": 2,
+            "label": null,
+            "name": "fov_blocked_description",
+            "query": "Represent blocked are ratio value of the blocking pixels. If the blocked are ratio value stays above the threshold for enough consecutive frames an alarm will be triggered.",
+            "skipUrlSync": false,
+            "type": "constant"
+          }
+        ]
+      },
+      "time": {
+        "from": "now-30m",
+        "to": "now"
+      },
+      "timepicker": {
+        "hidden": false,
+        "refresh_intervals": [
+          "5s",
+          "10s",
+          "30s",
+          "1m",
+          "5m",
+          "15m",
+          "30m",
+          "1h",
+          "2h",
+          "1d"
+        ],
+        "time_options": [
+          "5m",
+          "15m",
+          "1h",
+          "6h",
+          "12h",
+          "24h",
+          "2d",
+          "7d",
+          "30d"
+        ],
+        "type": "timepicker"
+      },
+      "timezone": "browser",
+      "title": "CV Application Monitoring Dashboard (video-content-quality-monitor)",
+      "uid": "S3qORR27y",
+      "version": 5
+    }
+{{- end }}

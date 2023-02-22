@@ -1,0 +1,814 @@
+{{- /*
+Generated from 'pnp' from https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/main/manifests/grafana-dashboardDefinitions.yaml
+Do not change in-place! In order to change this file first read following link:
+https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack/hack
+*/ -}}
+{{- $kubeTargetVersion := default .Capabilities.KubeVersion.GitVersion .Values.kubeTargetVersionOverride }}
+{{- if and (or .Values.grafana.enabled .Values.grafana.forceDeployDashboards) (semverCompare ">=1.14.0-0" $kubeTargetVersion) (semverCompare "<9.9.9-9" $kubeTargetVersion) .Values.grafana.defaultDashboardsEnabled .Values.kubeScheduler.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ template "kube-prometheus-stack-grafana.namespace" . }}
+  name: {{ printf "%s-%s" (include "kube-prometheus-stack.fullname" $) "pnp" | trunc 63 | trimSuffix "-" }}
+  annotations:
+{{ toYaml .Values.grafana.sidecar.dashboards.annotations | indent 4 }}
+  labels:
+    {{- if $.Values.grafana.sidecar.dashboards.label }}
+    {{ $.Values.grafana.sidecar.dashboards.label }}: {{ ternary $.Values.grafana.sidecar.dashboards.labelValue "1" (not (empty $.Values.grafana.sidecar.dashboards.labelValue)) | quote }}
+    {{- end }}
+    app: {{ template "kube-prometheus-stack.name" $ }}-grafana
+{{ include "kube-prometheus-stack.labels" $ | indent 4 }}
+data:
+  pnp.json: |-
+    {
+        "annotations": {
+            "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                "type": "datasource",
+                "uid": "grafana"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "target": {
+                "limit": 100,
+                "matchAny": false,
+                "tags": [],
+                "type": "dashboard"
+                },
+                "type": "dashboard"
+            }
+            ]
+        },
+        "editable": true,
+        "gnetId": null,
+        "graphTooltip": 0,
+        "id": 4295,
+        "iteration": 1677089014807,
+        "links": [],
+        "panels": [
+            {
+            "datasource": null,
+            "description": "$box_interaction_per_interval_desc",
+            "fieldConfig": {
+                "defaults": {
+                "color": {
+                    "mode": "palette-classic"
+                },
+                "custom": {
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                    "graph": false,
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                    },
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                    "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "spanNulls": false
+                },
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                    {
+                        "color": "green",
+                        "value": null
+                    },
+                    {
+                        "color": "red",
+                        "value": 80
+                    }
+                    ]
+                }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "id": 14,
+            "options": {
+                "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": true
+                },
+                "tooltip": {
+                "mode": "single",
+                "sort": "none"
+                },
+                "tooltipOptions": {
+                "mode": "single"
+                }
+            },
+            "targets": [
+                {
+                "editorMode": "code",
+                "exemplar": true,
+                "expr": "box_interaction_per_interval{job=~\"$job\"}",
+                "interval": "",
+                "legendFormat": "box_interaction_per_interval (job=\"{{`{{`}}job{{`}}`}}\")",
+                "range": true,
+                "refId": "A"
+                }
+            ],
+            "title": "Number of Box Interactions",
+            "type": "timeseries"
+            },
+            {
+            "datasource": null,
+            "description": "$box_count_per_interval_desc",
+            "fieldConfig": {
+                "defaults": {
+                "color": {
+                    "mode": "palette-classic"
+                },
+                "custom": {
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                    "graph": false,
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                    },
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                    "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "spanNulls": false
+                },
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                    {
+                        "color": "green",
+                        "value": null
+                    },
+                    {
+                        "color": "red",
+                        "value": 80
+                    }
+                    ]
+                }
+                },
+                "overrides": [
+                {
+                    "__systemRef": "hideSeriesFrom",
+                    "matcher": {
+                    "id": "byNames",
+                    "options": {
+                        "mode": "exclude",
+                        "names": [
+                        "box_count_per_interval (job=\"pick-and-pack-app-1234\")"
+                        ],
+                        "prefix": "All except:",
+                        "readOnly": true
+                    }
+                    },
+                    "properties": [
+                    {
+                        "id": "custom.hideFrom",
+                        "value": {
+                        "graph": true,
+                        "legend": false,
+                        "tooltip": false
+                        }
+                    }
+                    ]
+                }
+                ]
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "id": 16,
+            "options": {
+                "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": true
+                },
+                "tooltip": {
+                "mode": "single",
+                "sort": "none"
+                },
+                "tooltipOptions": {
+                "mode": "single"
+                }
+            },
+            "targets": [
+                {
+                "editorMode": "code",
+                "exemplar": true,
+                "expr": "box_count_per_interval{job=~\"$job\"}",
+                "interval": "",
+                "legendFormat": "box_count_per_interval (job=\"{{`{{`}}job{{`}}`}}\")",
+                "range": true,
+                "refId": "A"
+                }
+            ],
+            "title": "Detected Box Count",
+            "type": "timeseries"
+            },
+            {
+            "datasource": null,
+            "description": "$people_count_per_interval_desc",
+            "fieldConfig": {
+                "defaults": {
+                "color": {
+                    "mode": "palette-classic"
+                },
+                "custom": {
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                    "graph": false,
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                    },
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                    "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "spanNulls": false
+                },
+                "decimals": 1,
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                    {
+                        "color": "green",
+                        "value": null
+                    },
+                    {
+                        "color": "red",
+                        "value": 80
+                    }
+                    ]
+                },
+                "unit": "none"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 9
+            },
+            "id": 18,
+            "options": {
+                "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": true
+                },
+                "tooltip": {
+                "mode": "single",
+                "sort": "none"
+                },
+                "tooltipOptions": {
+                "mode": "single"
+                }
+            },
+            "targets": [
+                {
+                "editorMode": "code",
+                "exemplar": true,
+                "expr": "people_count_per_interval{job=~\"$job\"}",
+                "interval": "",
+                "legendFormat": "people_count_per_interval (job=\"{{`{{`}}job{{`}}`}}\")",
+                "range": true,
+                "refId": "A"
+                }
+            ],
+            "title": "Detected People Count",
+            "type": "timeseries"
+            },
+            {
+            "datasource": null,
+            "description": "$active_interaction_time_ratio_desc",
+            "fieldConfig": {
+                "defaults": {
+                "color": {
+                    "mode": "palette-classic"
+                },
+                "custom": {
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                    "graph": false,
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                    },
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                    "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "spanNulls": false
+                },
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                    {
+                        "color": "green",
+                        "value": null
+                    },
+                    {
+                        "color": "red",
+                        "value": 80
+                    }
+                    ]
+                },
+                "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 9
+            },
+            "id": 20,
+            "options": {
+                "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": true
+                },
+                "tooltip": {
+                "mode": "single",
+                "sort": "none"
+                },
+                "tooltipOptions": {
+                "mode": "single"
+                }
+            },
+            "targets": [
+                {
+                "editorMode": "code",
+                "exemplar": true,
+                "expr": "active_interaction_time_ratio{job=~\"$job\"}*100",
+                "interval": "",
+                "legendFormat": "active_interaction_time_ratio (job=\"{{`{{`}}job{{`}}`}}\")",
+                "range": true,
+                "refId": "A"
+                }
+            ],
+            "title": "Active Interaction on Frames Ratio",
+            "type": "timeseries"
+            },
+            {
+            "datasource": null,
+            "description": "$box_on_conveyor_seconds_desc",
+            "fieldConfig": {
+                "defaults": {
+                "color": {
+                    "mode": "palette-classic"
+                },
+                "custom": {
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                    "graph": false,
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                    },
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                    "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "spanNulls": false
+                },
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                    {
+                        "color": "green",
+                        "value": null
+                    },
+                    {
+                        "color": "red",
+                        "value": 80
+                    }
+                    ]
+                },
+                "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 18
+            },
+            "id": 22,
+            "options": {
+                "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": true
+                },
+                "tooltip": {
+                "mode": "single",
+                "sort": "none"
+                },
+                "tooltipOptions": {
+                "mode": "single"
+                }
+            },
+            "targets": [
+                {
+                "editorMode": "code",
+                "exemplar": true,
+                "expr": "box_on_conveyor_seconds{job=~\"$job\"}",
+                "interval": "",
+                "legendFormat": "box ID: {{`{{`}}box_id{{`}}`}}(job=\"{{`{{`}}job{{`}}`}}\")",
+                "range": true,
+                "refId": "A"
+                },
+                {
+                "editorMode": "code",
+                "exemplar": true,
+                "expr": "stuck_box_threshold_minute{job=~\"$job\"}*60",
+                "hide": false,
+                "interval": "",
+                "legendFormat": "stuck_box_threshold_minute (job=\"{{`{{`}}job{{`}}`}}\")",
+                "range": true,
+                "refId": "B"
+                }
+            ],
+            "title": "Box time on conveyor (seconds)",
+            "type": "timeseries"
+            },
+            {
+            "datasource": null,
+            "description": "$box_stuck_status_desc",
+            "fieldConfig": {
+                "defaults": {
+                "color": {
+                    "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                    {
+                        "color": "green",
+                        "value": null
+                    },
+                    {
+                        "color": "red",
+                        "value": 1
+                    }
+                    ]
+                }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 18
+            },
+            "id": 24,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                "calcs": [
+                    "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+                },
+                "text": {},
+                "textMode": "name"
+            },
+            "pluginVersion": "7.5.11",
+            "targets": [
+                {
+                "editorMode": "code",
+                "expr": "box_stuck_status{box_stuck_status=\"True\"}",
+                "legendFormat": "{{`{{`}}box_id{{`}}`}}",
+                "range": true,
+                "refId": "A"
+                }
+            ],
+            "title": "Box ID monitor (Red is stuck)",
+            "type": "stat"
+            },
+            {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "UU22bINVz"
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 11,
+                "w": 12,
+                "x": 0,
+                "y": 27
+            },
+            "id": 26,
+            "options": {
+                "code": {
+                "language": "plaintext",
+                "showLineNumbers": false,
+                "showMiniMap": false
+                },
+                "content": "### Description\n---\n#### Metrics<br>\n- `box_interaction_per_interval` - $box_interaction_per_interval_desc\n- `box_count_per_interval` - $box_count_per_interval_desc\n- `people_count_per_interval` - $people_count_per_interval_desc\n- `active_interaction_time_ratio` - $active_interaction_time_ratio_desc\n- `box_on_conveyor_seconds` - $box_on_conveyor_seconds_desc\n- `stuck_box_threshold_minute` - $stuck_box_threshold_minute_desc\n- `box_stuck_status` - $box_stuck_status_desc<br><br>",
+                "mode": "markdown"
+            },
+            "pluginVersion": "7.5.11",
+            "type": "text"
+            },
+            {
+            "datasource": null,
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 3,
+                "w": 24,
+                "x": 0,
+                "y": 38
+            },
+            "id": 1,
+            "type": "welcome"
+            },
+            {
+            "datasource": null,
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 15,
+                "w": 12,
+                "x": 0,
+                "y": 41
+            },
+            "id": 3,
+            "links": [],
+            "options": {
+                "folderId": 0,
+                "maxItems": 30,
+                "query": "",
+                "showHeadings": true,
+                "showRecentlyViewed": true,
+                "showSearch": false,
+                "showStarred": true,
+                "tags": []
+            },
+            "pluginVersion": "7.5.11",
+            "tags": [],
+            "title": "Dashboards",
+            "type": "dashlist"
+            },
+            {
+            "datasource": null,
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 15,
+                "w": 12,
+                "x": 12,
+                "y": 41
+            },
+            "id": 4,
+            "links": [],
+            "options": {
+                "feedUrl": "https://grafana.com/blog/news.xml",
+                "showImage": true
+            },
+            "title": "Latest from the blog",
+            "type": "news"
+            }
+        ],
+        "refresh": "10s",
+        "schemaVersion": 27,
+        "style": "dark",
+        "tags": [
+            "CV"
+        ],
+        "templating": {
+            "list": [
+            {
+                "allValue": null,
+                "current": {
+                "selected": true,
+                "tags": [],
+                "text": [
+                    "pick-and-pack-app-1234"
+                ],
+                "value": [
+                    "pick-and-pack-app-1234"
+                ]
+                },
+                "datasource": "Prometheus",
+                "definition": "label_values(box_count_per_interval, job)",
+                "description": null,
+                "error": null,
+                "hide": 0,
+                "includeAll": false,
+                "label": "",
+                "multi": true,
+                "name": "job",
+                "options": [],
+                "query": {
+                "query": "label_values(box_count_per_interval, job)",
+                "refId": "StandardVariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 0,
+                "tagValuesQuery": "",
+                "tags": [],
+                "tagsQuery": "",
+                "type": "query",
+                "useTags": false
+            },
+            {
+                "description": "Number of interactions since the last report",
+                "error": null,
+                "hide": 2,
+                "label": null,
+                "name": "box_interaction_per_interval_desc",
+                "query": "Number of interactions since the last report",
+                "skipUrlSync": false,
+                "type": "constant"
+            },
+            {
+                "description": "Number of boxes detected since the last report",
+                "error": null,
+                "hide": 2,
+                "label": null,
+                "name": "box_count_per_interval_desc",
+                "query": "Number of boxes detected since the last report",
+                "skipUrlSync": false,
+                "type": "constant"
+            },
+            {
+                "description": "Number of people detected since the last report\t",
+                "error": null,
+                "hide": 2,
+                "label": null,
+                "name": "people_count_per_interval_desc",
+                "query": "Number of people detected since the last report\t",
+                "skipUrlSync": false,
+                "type": "constant"
+            },
+            {
+                "description": "Number of frames where an interaction happens divided by the number of frames since the last report\t",
+                "error": null,
+                "hide": 2,
+                "label": null,
+                "name": "active_interaction_time_ratio_desc",
+                "query": "Number of frames where an interaction happens divided by the number of frames since the last report\t",
+                "skipUrlSync": false,
+                "type": "constant"
+            },
+            {
+                "description": "For each detected box: how long they had been on the conveyor (in seconds) ",
+                "error": null,
+                "hide": 2,
+                "label": null,
+                "name": "box_on_conveyor_seconds_desc",
+                "query": "For each detected box: how long they had been on the conveyor (in seconds) ",
+                "skipUrlSync": false,
+                "type": "constant"
+            },
+            {
+                "description": "If a box is on the conveyor for more than this time, we declare it a stucked box. In minutes.",
+                "error": null,
+                "hide": 2,
+                "label": null,
+                "name": "stuck_box_threshold_minute_desc",
+                "query": "If a box is on the conveyor for more than this time, we declare it a stucked box. In minutes.",
+                "skipUrlSync": false,
+                "type": "constant"
+            },
+            {
+                "description": "For each box: if the box is declared stucked this status is True, False otherwise.",
+                "error": null,
+                "hide": 2,
+                "label": null,
+                "name": "box_stuck_status_desc",
+                "query": "For each box: if the box is declared stucked this status is True, False otherwise.",
+                "skipUrlSync": false,
+                "type": "constant"
+            }
+            ]
+        },
+        "time": {
+            "from": "now-15m",
+            "to": "now"
+        },
+        "timepicker": {
+            "hidden": false,
+            "refresh_intervals": [
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+            ],
+            "time_options": [
+            "5m",
+            "15m",
+            "1h",
+            "6h",
+            "12h",
+            "24h",
+            "2d",
+            "7d",
+            "30d"
+            ],
+            "type": "timepicker"
+        },
+        "timezone": "browser",
+        "title": "CV Application Monitoring Dashboard (pick-and-pack application)",
+        "uid": "ZpgZ8e1Vk",
+        "version": 13
+    }
+{{- end }}

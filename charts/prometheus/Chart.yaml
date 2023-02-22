@@ -33,7 +33,7 @@ dependencies:
     condition: kube-state-metrics.enabled
   - name: prometheus-node-exporter
     version: "4.8.*"
-    repository: https://prometheus-community.github.io/helm-charts
+    repository: "/Users/szaboak/workspace/git/helm-charts/"
     condition: prometheus-node-exporter.enabled
   - name: prometheus-pushgateway
     version: "2.0.*"
