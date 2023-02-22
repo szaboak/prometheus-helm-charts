@@ -1,3 +1,15 @@
+# Alpharetta Use
+
+Call from here: 
+helm upgrade prometheus-stack ./charts/kube-prometheus-stack/ -f ./charts/kube-prometheus-stack/local-vaules.yaml -n prometheus --kube-context alpharetta
+
+expose grafana port: 
+kubectl expose service prometheus-stack-grafana -n prometheus --type=NodePort --target-port=3000 --name=grafana-ext
+
+Check port number with `kubectl get services -n prometheus`
+open port in browser
+
+
 # Prometheus Community Kubernetes Helm Charts
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Release Charts](https://github.com/prometheus-community/helm-charts/workflows/Release%20Charts/badge.svg?branch=main) [![Releases downloads](https://img.shields.io/github/downloads/prometheus-community/helm-charts/total.svg)](https://github.com/prometheus-community/helm-charts/releases)
