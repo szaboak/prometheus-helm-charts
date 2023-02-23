@@ -555,7 +555,10 @@ data:
             "targets": [
                 {
                 "editorMode": "code",
+                "exemplar": true,
                 "expr": "box_stuck_status{box_stuck_status=\"True\"}",
+                "instant": true,
+                "interval": "",
                 "legendFormat": "{{`{{`}}box_id{{`}}`}}",
                 "range": true,
                 "refId": "A"
